@@ -1,4 +1,4 @@
-package info.fekri.dunibazaar.theme
+package info.fekri.dunibazaar.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
