@@ -10,23 +10,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import info.fekri.dunibazaar.ui.theme.DuniBazaarTheme
+import info.fekri.dunibazaar.ui.theme.MainAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DuniBazaarTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+            MainAppTheme {
+                DuniBazaarUi()
             }
         }
     }
+}
+
+@Composable
+fun DuniBazaarUi() {
+
 }
 
 @Composable
@@ -37,7 +36,7 @@ fun Greeting(name: String) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    DuniBazaarTheme {
+    MainAppTheme {
         Greeting("Android")
     }
 }
