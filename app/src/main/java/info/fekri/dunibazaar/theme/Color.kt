@@ -1,4 +1,4 @@
-package info.fekri.dunibazaar.ui.theme
+package info.fekri.dunibazaar.theme
 
 import androidx.compose.ui.graphics.Color
 
