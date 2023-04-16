@@ -38,7 +38,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.2.0'
+        kotlinCompilerExtensionVersion '1.4.0'
     }
     packagingOptions {
         resources {
@@ -49,7 +49,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.activity:activity-compose:1.7.0'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
@@ -69,16 +69,16 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
 
     // Coil
-    implementation "io.coil-kt:coil-compose:2.0.0-rc02"
+    implementation "io.coil-kt:coil-compose:2.3.0"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
 
     // Koin
-    implementation "dev.burnoo:cokoin:0.3.2"
-    implementation "dev.burnoo:cokoin-android-viewmodel:0.3.2"
-    implementation "dev.burnoo:cokoin-android-navigation:0.3.2"
+    implementation "dev.burnoo:cokoin:1.0.0"
+    implementation "dev.burnoo:cokoin-android-viewmodel:1.0.0"
+    implementation "dev.burnoo:cokoin-android-navigation:1.0.0"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
@@ -89,6 +89,6 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.1"
 
     // System Ui Controller
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.17.0'
 
 }
