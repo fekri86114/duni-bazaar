@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import info.fekri.dunibazaar.R
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
 import info.fekri.dunibazaar.ui.theme.Blue
@@ -49,7 +50,7 @@ fun IntroScreen() {
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
-            onClick = {},
+            onClick = {  },
             modifier = Modifier.fillMaxWidth(0.7f)
         ) {
             Text(text = "Sign Up")
