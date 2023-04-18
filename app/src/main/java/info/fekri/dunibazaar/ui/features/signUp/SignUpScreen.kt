@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,12 +24,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import dev.burnoo.cokoin.navigation.getNavController
+import dev.burnoo.cokoin.navigation.getNavViewModel
+import dev.burnoo.cokoin.viewmodel.getViewModel
 import info.fekri.dunibazaar.R
 import info.fekri.dunibazaar.ui.features.IntroScreen
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
 import info.fekri.dunibazaar.ui.theme.Blue
 import info.fekri.dunibazaar.ui.theme.MainAppTheme
 import info.fekri.dunibazaar.ui.theme.Shapes
+import info.fekri.dunibazaar.util.MyScreens
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -45,6 +51,8 @@ fun SignUpPreview() {
 
 @Composable
 fun SignUpScreen() {
+    val navigation = getNavController()
+    val viewModel = getNavViewModel<SignUpViewModel>()
 
     Box {
 
@@ -54,7 +62,7 @@ fun SignUpScreen() {
                 .fillMaxHeight(0.4f)
                 .background(Blue)
         )
-        
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,11 +72,11 @@ fun SignUpScreen() {
         ) {
             IconApp()
 
-            MainCardView {
-
+            MainCardView(navigation, viewModel = viewModel) {
+                viewModel.signUpUser()
             }
         }
-        
+
     }
 
 }
@@ -80,20 +88,20 @@ fun IconApp() {
             .clip(CircleShape)
             .size(64.dp)
     ) {
-       Image(
-           modifier = Modifier.padding(14.dp),
-           painter = painterResource(id = R.drawable.ic_icon_app),
-           contentDescription = null
-       )
+        Image(
+            modifier = Modifier.padding(14.dp),
+            painter = painterResource(id = R.drawable.ic_icon_app),
+            contentDescription = null
+        )
     }
 }
 
 @Composable
-fun MainCardView(signUpEvent: () -> Unit) {
-    val name = remember { mutableStateOf("null") }
-    val email = remember { mutableStateOf("null") }
-    val password = remember { mutableStateOf("null") }
-    val confirmPassword = remember { mutableStateOf("null") }
+fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEvent: () -> Unit) {
+    val name = viewModel.name.observeAsState("")
+    val email = viewModel.email.observeAsState("")
+    val password = viewModel.password.observeAsState("")
+    val confirmPassword = viewModel.confirmPassword.observeAsState("")
 
     Card(
         modifier = Modifier
@@ -116,25 +124,25 @@ fun MainCardView(signUpEvent: () -> Unit) {
                 edtValue = name.value,
                 icon = R.drawable.ic_person,
                 hint = "Your full name"
-            ) { name.value = it }
+            ) { viewModel.name.value = it }
 
             MainTextField(
                 edtValue = email.value,
                 icon = R.drawable.ic_email,
                 hint = "Email"
-            ) { email.value = it }
+            ) { viewModel.email.value = it }
 
             PasswordTextField(
                 edtValue = password.value,
                 icon = R.drawable.ic_password,
                 hint = "Password"
-            ) { password.value = it }
+            ) { viewModel.password.value = it }
 
             PasswordTextField(
                 edtValue = confirmPassword.value,
                 icon = R.drawable.ic_password,
                 hint = "Confirm Password"
-            ) { confirmPassword.value = it }
+            ) { viewModel.confirmPassword.value = it }
 
             Button(
                 onClick = signUpEvent,
@@ -156,7 +164,14 @@ fun MainCardView(signUpEvent: () -> Unit) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                TextButton(onClick = {}) {
+                TextButton(
+                    onClick = {
+                        navigation.navigate(MyScreens.SignInScreen.route) {
+                            /* delete from back-stack */
+                            popUpTo(MyScreens.SignUpScreen.route) { inclusive = true }
+                        }
+                    }
+                ) {
                     Text(text = "Login", color = Blue)
                 }
 
@@ -200,7 +215,7 @@ fun PasswordTextField(edtValue: String, icon: Int, hint: String, onValueChanges:
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .padding(top = 12.dp),
-        visualTransformation = if (passwordVisible.value) VisualTransformation .None else PasswordVisualTransformation(),
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
             val image = if (passwordVisible.value) painterResource(id = R.drawable.ic_invisible)

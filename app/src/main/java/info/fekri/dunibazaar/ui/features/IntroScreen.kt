@@ -14,10 +14,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import dev.burnoo.cokoin.navigation.getNavController
 import info.fekri.dunibazaar.R
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
 import info.fekri.dunibazaar.ui.theme.Blue
 import info.fekri.dunibazaar.ui.theme.MainAppTheme
+import info.fekri.dunibazaar.util.MyScreens
 
 @Preview(showBackground = true)
 @Composable
@@ -34,6 +36,7 @@ fun IntroScreenPreview() {
 
 @Composable
 fun IntroScreen() {
+    val navigation = getNavController()
 
     Image(
         modifier = Modifier.fillMaxSize(),
@@ -50,14 +53,18 @@ fun IntroScreen() {
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
-            onClick = {  },
+            onClick = {
+                navigation.navigate(MyScreens.SignUpScreen.route)
+            },
             modifier = Modifier.fillMaxWidth(0.7f)
         ) {
             Text(text = "Sign Up")
         }
 
         Button(
-            onClick = {},
+            onClick = {
+                navigation.navigate(MyScreens.SignInScreen.route)
+            },
             modifier = Modifier.fillMaxWidth(0.7f),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
         ) {
