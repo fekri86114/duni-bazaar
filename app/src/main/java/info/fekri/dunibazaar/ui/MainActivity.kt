@@ -17,6 +17,7 @@ import dev.burnoo.cokoin.Koin
 import dev.burnoo.cokoin.navigation.KoinNavHost
 import info.fekri.dunibazaar.di.myModules
 import info.fekri.dunibazaar.ui.features.IntroScreen
+import info.fekri.dunibazaar.ui.features.signUp.SignUpScreen
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
 import info.fekri.dunibazaar.ui.theme.MainAppTheme
 import info.fekri.dunibazaar.util.KEY_CATEGORY_ARG
@@ -114,11 +115,6 @@ fun NoInternetScreen() {
 
 @Composable
 fun CartScreen() {
-
-}
-
-@Composable
-fun SignUpScreen() {
 
 }
 
