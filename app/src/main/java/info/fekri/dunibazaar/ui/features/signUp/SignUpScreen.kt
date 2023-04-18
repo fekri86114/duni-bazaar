@@ -2,8 +2,10 @@ package info.fekri.dunibazaar.ui.features.signUp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,13 +124,13 @@ fun MainCardView(signUpEvent: () -> Unit) {
                 hint = "Email"
             ) { email.value = it }
 
-            MainTextField(
+            PasswordTextField(
                 edtValue = password.value,
                 icon = R.drawable.ic_password,
                 hint = "Password"
             ) { password.value = it }
 
-            MainTextField(
+            PasswordTextField(
                 edtValue = confirmPassword.value,
                 icon = R.drawable.ic_password,
                 hint = "Confirm Password"
@@ -163,12 +168,7 @@ fun MainCardView(signUpEvent: () -> Unit) {
 }
 
 @Composable
-fun MainTextField(
-    edtValue: String,
-    icon: Int,
-    hint: String,
-    onValueChanges: (String) -> Unit
-) {
+fun MainTextField(edtValue: String, icon: Int, hint: String, onValueChanges: (String) -> Unit) {
 
     OutlinedTextField(
         value = edtValue,
@@ -181,6 +181,37 @@ fun MainTextField(
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .padding(top = 12.dp)
+    )
+
+}
+
+@Composable
+fun PasswordTextField(edtValue: String, icon: Int, hint: String, onValueChanges: (String) -> Unit) {
+    val passwordVisible = remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = edtValue,
+        onValueChange = onValueChanges,
+        label = { Text(text = hint) },
+        placeholder = { Text(text = hint) },
+        singleLine = true,
+        shape = Shapes.medium,
+        leadingIcon = { Icon(painterResource(id = icon), contentDescription = null) },
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .padding(top = 12.dp),
+        visualTransformation = if (passwordVisible.value) VisualTransformation .None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        trailingIcon = {
+            val image = if (passwordVisible.value) painterResource(id = R.drawable.ic_invisible)
+            else painterResource(id = R.drawable.ic_visible)
+
+            Icon(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
+            )
+        }
     )
 
 }
