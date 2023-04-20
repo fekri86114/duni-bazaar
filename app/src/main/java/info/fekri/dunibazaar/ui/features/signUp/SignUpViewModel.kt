@@ -13,7 +13,7 @@ class SignUpViewModel : ViewModel() {
 
     fun signUpUser() {
         /* test */
-        Log.v("DuniBazaarApp", "data -> ${name.value}")
+        Log.v("SignUpViewModelDuni", "data -> ${name.value}")
     }
 
 }

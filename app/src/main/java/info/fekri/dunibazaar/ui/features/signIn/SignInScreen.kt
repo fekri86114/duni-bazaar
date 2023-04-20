@@ -1,4 +1,4 @@
-package info.fekri.dunibazaar.ui.features.signUp
+package info.fekri.dunibazaar.ui.features.signIn
 
 import android.util.Patterns
 import android.widget.Toast
@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -32,9 +31,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
-import dev.burnoo.cokoin.viewmodel.getViewModel
 import info.fekri.dunibazaar.R
-import info.fekri.dunibazaar.ui.features.IntroScreen
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
 import info.fekri.dunibazaar.ui.theme.Blue
 import info.fekri.dunibazaar.ui.theme.MainAppTheme
@@ -44,25 +41,25 @@ import info.fekri.dunibazaar.util.NetworkChecker
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SignUpPreview() {
+fun SignInPreview() {
     MainAppTheme {
         Surface(
             color = BackgroundMain,
             modifier = Modifier.fillMaxSize()
         ) {
-            SignUpScreen()
+            SignInScreen()
         }
     }
 }
 
 @Composable
-fun SignUpScreen() {
+fun SignInScreen() {
     /* set UI changes here */
     val uiController = rememberSystemUiController()
     SideEffect { uiController.setStatusBarColor(Blue) }
 
     val navigation = getNavController()
-    val viewModel = getNavViewModel<SignUpViewModel>()
+    val viewModel = getNavViewModel<SignInViewModel>()
 
     Box {
 
@@ -83,7 +80,7 @@ fun SignUpScreen() {
             IconApp()
 
             MainCardView(navigation, viewModel = viewModel) {
-                viewModel.signUpUser()
+                viewModel.signInUser()
             }
         }
 
@@ -107,11 +104,9 @@ fun IconApp() {
 }
 
 @Composable
-fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEvent: () -> Unit) {
-    val name = viewModel.name.observeAsState("")
+fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEvent: () -> Unit) {
     val email = viewModel.email.observeAsState("")
     val password = viewModel.password.observeAsState("")
-    val confirmPassword = viewModel.confirmPassword.observeAsState("")
     val context = LocalContext.current
 
     Card(
@@ -127,15 +122,9 @@ fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEv
 
             Text(
                 modifier = Modifier.padding(top = 18.dp, bottom = 18.dp),
-                text = "Sign Up",
+                text = "Sign In",
                 style = TextStyle(color = Blue, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             )
-
-            MainTextField(
-                edtValue = name.value,
-                icon = R.drawable.ic_person,
-                hint = "Your full name"
-            ) { viewModel.name.value = it }
 
             MainTextField(
                 edtValue = email.value,
@@ -149,53 +138,23 @@ fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEv
                 hint = "Password"
             ) { viewModel.password.value = it }
 
-            PasswordTextField(
-                edtValue = confirmPassword.value,
-                icon = R.drawable.ic_password,
-                hint = "Confirm Password"
-            ) { viewModel.confirmPassword.value = it }
-
             Button(
                 onClick = {
-                    if (
-                        name.value.isNotEmpty() &&
-                        email.value.isNotEmpty() &&
-                        password.value.isNotEmpty() &&
-                        confirmPassword.value.isNotEmpty()
-                    ) {
-                        // check user input -->
-                        if (password.value == confirmPassword.value) {
-                            if (password.value.length >= 8) {
-                                /* email checker */
-                                if (Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
-                                    if (NetworkChecker(context).isInternetConnected) {
-                                        signUpEvent.invoke()
-                                    } else {
-                                        Toast
-                                            .makeText(
-                                                context,
-                                                "Please, Connect to Internet!",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                    }
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Email format is not true!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                    if (Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+                        if (password.value.length >= 8) {
+                            if (NetworkChecker(context).isInternetConnected) {
+                                signInEvent.invoke()
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Password characters are not more than 8!",
+                                    "Please, Connect to Internet!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         } else {
                             Toast.makeText(
                                 context,
-                                "Passwords aren't them same!",
+                                "Password characters are not more than 8!",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -203,17 +162,16 @@ fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEv
                         Toast
                             .makeText(
                                 context,
-                                "Please, fill out the blanks!",
+                                "Email format is not correct!",
                                 Toast.LENGTH_SHORT
                             ).show()
                     }
-
                 },
                 modifier = Modifier.padding(top = 28.dp, bottom = 8.dp)
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = "Register Account"
+                    text = "Sign In"
                 )
             }
 
@@ -223,19 +181,19 @@ fun MainCardView(navigation: NavController, viewModel: SignUpViewModel, signUpEv
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = "Already have an Account?")
+                Text(text = "Don't have an Account?")
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 TextButton(
                     onClick = {
-                        navigation.navigate(MyScreens.SignInScreen.route) {
+                        navigation.navigate(MyScreens.SignUpScreen.route) {
                             /* delete from back-stack */
-                            popUpTo(MyScreens.SignUpScreen.route) { inclusive = true }
+                            popUpTo(MyScreens.SignInScreen.route) { inclusive = true }
                         }
                     }
                 ) {
-                    Text(text = "Login", color = Blue)
+                    Text(text = "Register Here", color = Blue)
                 }
 
             }

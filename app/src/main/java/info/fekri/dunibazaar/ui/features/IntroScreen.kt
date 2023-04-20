@@ -7,6 +7,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.burnoo.cokoin.navigation.getNavController
 import info.fekri.dunibazaar.R
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
@@ -36,6 +38,10 @@ fun IntroScreenPreview() {
 
 @Composable
 fun IntroScreen() {
+    val uiController = rememberSystemUiController()
+    /* set UI changes here */
+    SideEffect { uiController.setStatusBarColor(Blue) }
+
     val navigation = getNavController()
 
     Image(
