@@ -24,12 +24,16 @@ import info.fekri.dunibazaar.ui.theme.MainAppTheme
 import info.fekri.dunibazaar.util.KEY_CATEGORY_ARG
 import info.fekri.dunibazaar.util.KEY_PRODUCT_ARG
 import info.fekri.dunibazaar.util.MyScreens
+import org.koin.android.ext.koin.androidContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Koin(appDeclaration = { modules(myModules) }) {
+            Koin(appDeclaration = {
+                androidContext(this@MainActivity)
+                modules(myModules)
+            }) {
                 MainAppTheme {
                     Surface(
                         color = BackgroundMain,
