@@ -1,6 +1,6 @@
 package info.fekri.dunibazaar.model.net
 
-import info.fekri.dunibazaar.model.data.LogInResponse
+import info.fekri.dunibazaar.model.data.LoginResponse
 import info.fekri.dunibazaar.model.repository.TokenInMemory
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -14,10 +14,7 @@ class AuthChecker : Authenticator, KoinComponent {
 
     override fun authenticate(route: Route?, response: Response): Request? {
 
-        if (
-            TokenInMemory.token != null &&
-            !response.request.url.pathSegments.last().equals("refreshToken", false)
-        ) {
+        if (TokenInMemory.token != null && !response.request.url.pathSegments.last().equals("refreshToken", false)) {
 
             val result = refreshToken()
             if (result) {
@@ -30,8 +27,7 @@ class AuthChecker : Authenticator, KoinComponent {
     }
 
     private fun refreshToken(): Boolean {
-
-        val request: retrofit2.Response<LogInResponse> = apiService.refreshToken().execute()
+        val request: retrofit2.Response<LoginResponse> = apiService.refreshToken().execute()
         if (request.body() != null) {
             if (request.body()!!.success) {
                 return true

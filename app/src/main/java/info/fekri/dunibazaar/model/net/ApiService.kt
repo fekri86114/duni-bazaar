@@ -1,7 +1,9 @@
 package info.fekri.dunibazaar.model.net
 
 import com.google.gson.JsonObject
-import info.fekri.dunibazaar.model.data.LogInResponse
+import info.fekri.dunibazaar.model.data.AdsResponse
+import info.fekri.dunibazaar.model.data.LoginResponse
+import info.fekri.dunibazaar.model.data.ProductResponse
 import info.fekri.dunibazaar.model.repository.TokenInMemory
 import info.fekri.dunibazaar.util.BASE_URL
 import okhttp3.OkHttpClient
@@ -15,13 +17,19 @@ import retrofit2.http.POST
 interface ApiService {
 
     @POST("signUp")
-    suspend fun signUp(@Body jsonObject: JsonObject): LogInResponse
+    suspend fun signUp(@Body jsonObject: JsonObject): LoginResponse
 
     @POST("signIn")
-    suspend fun signIn(@Body jsonObject: JsonObject): LogInResponse
+    suspend fun signIn(@Body jsonObject: JsonObject): LoginResponse
 
     @GET("refreshToken")
-    fun refreshToken(): Call<LogInResponse>
+    fun refreshToken(): Call<LoginResponse>
+
+    @GET("getProducts")
+    suspend fun getAllProducts(): ProductResponse
+
+    @GET("getSliderPics")
+    suspend fun getAllAds(): AdsResponse
 
 }
 
@@ -40,7 +48,6 @@ fun createApiService(): ApiService {
             newRequest.method(oldRequest.method, oldRequest.body)
 
             return@addInterceptor it.proceed(newRequest.build())
-
         }.build()
 
     val retrofit = Retrofit.Builder()

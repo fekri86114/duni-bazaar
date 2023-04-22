@@ -6,32 +6,34 @@ import android.net.NetworkCapabilities
 import android.os.Build
 
 class NetworkChecker(private val context: Context) {
-    val isInternetConnected: Boolean
+
+    val isInternetConnected :Boolean
         get() {
 
             var result = false
-            val connectivityManager =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 val networkCapabilities = connectivityManager.activeNetwork ?: return false
-                val myNetwork =
-                    connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+                val myNetwork = connectivityManager.getNetworkCapabilities( networkCapabilities ) ?: return false
 
                 result = when {
 
-                    myNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    myNetwork.hasTransport( NetworkCapabilities.TRANSPORT_WIFI ) -> true
 
-                    myNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true // TRANSPORT_CELLULAR is about mobile data
+                    myNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
 
-                    myNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true // TRANSPORT_ETHERNET is checking is user connected to internet by usb?
+                    myNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
 
                     else -> false
+
                 }
 
+            }
 
-            } else {
+            else {
+
 
                 result = when (connectivityManager.activeNetworkInfo?.type) {
 
@@ -42,13 +44,17 @@ class NetworkChecker(private val context: Context) {
                     ConnectivityManager.TYPE_ETHERNET -> true
 
                     else -> false
+
                 }
 
             }
 
+
             return result
 
         }
+
+
     val isWifiConnected :Boolean
         get() {
 
@@ -71,9 +77,11 @@ class NetworkChecker(private val context: Context) {
                     else -> false
 
                 }
+
             }
 
             else {
+
 
                 result = when (connectivityManager.activeNetworkInfo?.type) {
 
@@ -89,8 +97,11 @@ class NetworkChecker(private val context: Context) {
 
             }
 
+
             return result
+
         }
+
 
     val isMobileDataConnected :Boolean
         get() {
@@ -114,9 +125,11 @@ class NetworkChecker(private val context: Context) {
                     else -> false
 
                 }
+
             }
 
             else {
+
 
                 result = when (connectivityManager.activeNetworkInfo?.type) {
 
@@ -132,8 +145,11 @@ class NetworkChecker(private val context: Context) {
 
             }
 
+
             return result
+
         }
+
 
     val isEthernetConnected :Boolean
         get() {
@@ -162,6 +178,7 @@ class NetworkChecker(private val context: Context) {
 
             else {
 
+
                 result = when (connectivityManager.activeNetworkInfo?.type) {
 
                     ConnectivityManager.TYPE_WIFI -> false
@@ -176,6 +193,9 @@ class NetworkChecker(private val context: Context) {
 
             }
 
+
             return result
+
         }
+
 }

@@ -1,23 +1,15 @@
 package info.fekri.dunibazaar.model.repository
 
-
 object TokenInMemory {
-    /**
-     * The [userName] is **OPEN** to read but,
-     * **CLOSE** to edit (by making setter ***'private'***)
-     * */
-    var userName: String? = null
+
+    var username: String? = null
         private set
 
-    /**
-     * The [token] is **OPEN** to read but,
-     * **CLOSE** to edit (by making setter ***'private'***)
-     * */
     var token: String? = null
         private set
 
-    fun refreshToken(userName: String?, newToken: String?) {
-        this.userName = userName
+    fun refreshToken(username: String? , newToken: String? ) {
+        this.username = username
         this.token = newToken
     }
 

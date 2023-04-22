@@ -1,7 +1,7 @@
 package info.fekri.dunibazaar.util
 
-const val KEY_PRODUCT_ARG = "product_id"
-const val KEY_CATEGORY_ARG = "category_name"
+const val KEY_PRODUCT_ARG = "productId"
+const val KEY_CATEGORY_ARG = "categoryName"
 
-const val BASE_URL = "https://dunijet.ir./DuniBazaar/"
-const val VALUE_SUCCESS = "Success"
+const val BASE_URL = "https://dunijet.ir/Projects/DuniBazaar/"
+const val VALUE_SUCCESS = "success"

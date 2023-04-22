@@ -11,71 +11,68 @@ class UserRepositoryImpl(
     private val sharedPref: SharedPreferences
 ) : UserRepository {
 
-    override suspend fun signUp(name: String, userName: String, password: String): String {
+    override suspend fun signUp(name: String, username: String, password: String) :String {
 
         val jsonObject = JsonObject().apply {
             addProperty("name", name)
-            addProperty("userName", userName)
+            addProperty("email", username)
             addProperty("password", password)
         }
 
         val result = apiService.signUp(jsonObject)
-        return if (result.success) {
-            TokenInMemory.refreshToken(userName, result.token)
+        if(result.success) {
+            TokenInMemory.refreshToken(username , result.token)
             saveToken(result.token)
-            saveUserName(userName)
-
-            VALUE_SUCCESS
+            saveUserName(username)
+            return VALUE_SUCCESS
         } else {
-            result.message
+            return result.message
         }
 
     }
 
-    override suspend fun singIn(userName: String, password: String): String {
+    override suspend fun signIn(username: String, password: String):String {
 
         val jsonObject = JsonObject().apply {
-            addProperty("email", userName)
-            addProperty("password", password)
+            addProperty("email" , username)
+            addProperty("password" , password)
         }
 
         val result = apiService.signIn(jsonObject)
-        return if (result.success) {
-            TokenInMemory.refreshToken(userName, result.token)
+        if(result.success) {
+            TokenInMemory.refreshToken(username , result.token)
             saveToken(result.token)
-            saveUserName(userName)
-
-            VALUE_SUCCESS
+            saveUserName(username)
+            return VALUE_SUCCESS
         } else {
-            result.message
+            return result.message
         }
 
     }
 
     override fun signOut() {
-        TokenInMemory.refreshToken(null, null)
+        TokenInMemory.refreshToken(null , null)
         sharedPref.edit().clear().apply()
     }
 
-    /**
-     * [getToken] and [getUserName] are coming from sharedPreferences.
-     * ---
-     * **CASHING** in **MEMORY**
-     * */
     override fun loadToken() {
-        TokenInMemory.refreshToken( getUserName(), getToken() )
+        TokenInMemory.refreshToken( getUserName() , getToken() )
     }
 
     override fun saveToken(newToken: String) {
-        sharedPref.edit().putString("token", newToken).apply()
+        sharedPref.edit().putString("token" , newToken).apply()
     }
 
-    override fun getToken(): String = sharedPref.getString("token", "")!!
-
-    override fun saveUserName(userName: String) {
-        sharedPref.edit().putString("username", userName).apply()
+    override fun getToken(): String? {
+        return sharedPref.getString("token" , null)
     }
 
-    override fun getUserName(): String = sharedPref.getString("username", "")!!
+    override fun saveUserName(username: String) {
+        sharedPref.edit().putString("username" , username).apply()
+    }
+
+    override fun getUserName(): String? {
+        return sharedPref.getString("username" , null)
+    }
 
 }

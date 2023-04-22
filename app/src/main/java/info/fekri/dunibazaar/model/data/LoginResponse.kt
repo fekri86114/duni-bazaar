@@ -1,6 +1,6 @@
 package info.fekri.dunibazaar.model.data
 
-data class LogInResponse(
+data class LoginResponse(
     val expiresAt: Int,
     val message: String,
     val success: Boolean,

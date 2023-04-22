@@ -38,10 +38,12 @@ import info.fekri.dunibazaar.ui.theme.MainAppTheme
 import info.fekri.dunibazaar.ui.theme.Shapes
 import info.fekri.dunibazaar.util.MyScreens
 import info.fekri.dunibazaar.util.NetworkChecker
+import info.fekri.dunibazaar.util.VALUE_SUCCESS
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
-fun SignInPreview() {
+fun SignInScreenPreview() {
+
     MainAppTheme {
         Surface(
             color = BackgroundMain,
@@ -50,14 +52,15 @@ fun SignInPreview() {
             SignInScreen()
         }
     }
+
 }
 
 @Composable
 fun SignInScreen() {
-    /* set UI changes here */
     val uiController = rememberSystemUiController()
     SideEffect { uiController.setStatusBarColor(Blue) }
 
+    val context = LocalContext.current
     val navigation = getNavController()
     val viewModel = getNavViewModel<SignInViewModel>()
 
@@ -73,15 +76,31 @@ fun SignInScreen() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.95f),
+                .fillMaxHeight(0.8f),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             IconApp()
 
-            MainCardView(navigation, viewModel = viewModel) {
-                viewModel.signInUser()
+            MainCardView(navigation, viewModel) {
+
+                viewModel.signInUser {
+
+                    if (it == VALUE_SUCCESS) {
+                        navigation.navigate(MyScreens.MainScreen.route) {
+                            popUpTo(MyScreens.IntroScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+
             }
+
         }
 
     }
@@ -90,24 +109,28 @@ fun SignInScreen() {
 
 @Composable
 fun IconApp() {
+
     Surface(
         modifier = Modifier
             .clip(CircleShape)
             .size(64.dp)
     ) {
+
         Image(
             modifier = Modifier.padding(14.dp),
             painter = painterResource(id = R.drawable.ic_icon_app),
             contentDescription = null
         )
+
     }
+
 }
 
 @Composable
-fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEvent: () -> Unit) {
+fun MainCardView(navigation: NavController, viewModel: SignInViewModel, SignInEvent: () -> Unit) {
+    val context = LocalContext.current
     val email = viewModel.email.observeAsState("")
     val password = viewModel.password.observeAsState("")
-    val context = LocalContext.current
 
     Card(
         modifier = Modifier
@@ -116,6 +139,7 @@ fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEv
         elevation = 10.dp,
         shape = Shapes.medium
     ) {
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -126,52 +150,38 @@ fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEv
                 style = TextStyle(color = Blue, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             )
 
-            MainTextField(
-                edtValue = email.value,
-                icon = R.drawable.ic_email,
-                hint = "Email"
-            ) { viewModel.email.value = it }
-
+            MainTextField(email.value, R.drawable.ic_email, "Email") { viewModel.email.value = it }
             PasswordTextField(
-                edtValue = password.value,
-                icon = R.drawable.ic_password,
-                hint = "Password"
+                password.value,
+                R.drawable.ic_password,
+                "Password"
             ) { viewModel.password.value = it }
 
-            Button(
-                onClick = {
+            Button(onClick = {
+
+                if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
                     if (Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
-                        if (password.value.length >= 8) {
-                            if (NetworkChecker(context).isInternetConnected) {
-                                signInEvent.invoke()
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Please, Connect to Internet!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        if (NetworkChecker(context).isInternetConnected) {
+                            SignInEvent.invoke()
                         } else {
                             Toast.makeText(
                                 context,
-                                "Password characters are not more than 8!",
+                                "please connect to internet",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     } else {
-                        Toast
-                            .makeText(
-                                context,
-                                "Email format is not correct!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        Toast.makeText(context, "email format is not true", Toast.LENGTH_SHORT)
+                            .show()
                     }
-                },
-                modifier = Modifier.padding(top = 28.dp, bottom = 8.dp)
-            ) {
+                } else {
+                    Toast.makeText(context, "please write data first...", Toast.LENGTH_SHORT).show()
+                }
+
+            }, modifier = Modifier.padding(top = 28.dp, bottom = 8.dp)) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = "Sign In"
+                    text = "Log In"
                 )
             }
 
@@ -181,25 +191,25 @@ fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEv
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = "Don't have an Account?")
-
+                Text("Don't have an account?")
                 Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = {
 
-                TextButton(
-                    onClick = {
-                        navigation.navigate(MyScreens.SignUpScreen.route) {
-                            /* delete from back-stack */
-                            popUpTo(MyScreens.SignInScreen.route) { inclusive = true }
+                    navigation.navigate(MyScreens.SignUpScreen.route) {
+                        popUpTo(MyScreens.SignInScreen.route) {
+                            inclusive = true
                         }
                     }
-                ) {
-                    Text(text = "Register Here", color = Blue)
-                }
+
+                }) { Text("Register Here", color = Blue) }
 
             }
 
+
         }
+
     }
+
 
 }
 
@@ -207,16 +217,16 @@ fun MainCardView(navigation: NavController, viewModel: SignInViewModel, signInEv
 fun MainTextField(edtValue: String, icon: Int, hint: String, onValueChanges: (String) -> Unit) {
 
     OutlinedTextField(
+        label = { Text(hint) },
         value = edtValue,
-        onValueChange = onValueChanges,
-        label = { Text(text = hint) },
-        placeholder = { Text(text = hint) },
         singleLine = true,
-        shape = Shapes.medium,
-        leadingIcon = { Icon(painterResource(id = icon), contentDescription = null) },
+        onValueChange = onValueChanges,
+        placeholder = { Text(hint) },
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .padding(top = 12.dp)
+            .padding(top = 12.dp),
+        shape = Shapes.medium,
+        leadingIcon = { Icon(painterResource(icon), null) }
     )
 
 }
@@ -226,27 +236,29 @@ fun PasswordTextField(edtValue: String, icon: Int, hint: String, onValueChanges:
     val passwordVisible = remember { mutableStateOf(false) }
 
     OutlinedTextField(
+        label = { Text(hint) },
         value = edtValue,
-        onValueChange = onValueChanges,
-        label = { Text(text = hint) },
-        placeholder = { Text(text = hint) },
         singleLine = true,
-        shape = Shapes.medium,
-        leadingIcon = { Icon(painterResource(id = icon), contentDescription = null) },
+        onValueChange = onValueChanges,
+        placeholder = { Text(hint) },
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .padding(top = 12.dp),
+        shape = Shapes.medium,
+        leadingIcon = { Icon(painterResource(icon), null) },
         visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
-            val image = if (passwordVisible.value) painterResource(id = R.drawable.ic_invisible)
-            else painterResource(id = R.drawable.ic_visible)
+
+            val image = if (passwordVisible.value) painterResource(R.drawable.ic_invisible)
+            else painterResource(R.drawable.ic_visible)
 
             Icon(
                 painter = image,
                 contentDescription = null,
                 modifier = Modifier.clickable { passwordVisible.value = !passwordVisible.value }
             )
+
         }
     )
 
