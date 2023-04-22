@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -25,11 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dev.burnoo.cokoin.navigation.getNavViewModel
 import info.fekri.dunibazaar.R
 import info.fekri.dunibazaar.ui.theme.BackgroundMain
+import info.fekri.dunibazaar.ui.theme.Blue
 import info.fekri.dunibazaar.ui.theme.CardViewBackground
 import info.fekri.dunibazaar.ui.theme.MainAppTheme
 import info.fekri.dunibazaar.ui.theme.Shapes
+import info.fekri.dunibazaar.util.CATEGORY
+import info.fekri.dunibazaar.util.NetworkChecker
+import org.koin.core.parameter.parametersOf
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -47,8 +53,13 @@ fun MainScreenPreview() {
 @Composable
 fun MainScreen() {
 
+    val context = LocalContext.current
     val uiController = rememberSystemUiController()
     SideEffect { uiController.setStatusBarColor(Color.White) }
+
+    val viewModel = getNavViewModel<MainViewModel>(
+        parameters = { parametersOf(NetworkChecker(context).isInternetConnected) }
+    )
 
     Column(
         modifier = Modifier
@@ -57,19 +68,16 @@ fun MainScreen() {
             .padding(bottom = 16.dp)
     ) {
 
+        if (viewModel.showProgressBar.value) {
+            LinearProgressIndicator(
+                modifier= Modifier.fillMaxWidth(),
+                color = Blue
+            )
+        }
+
         TopToolbar()
 
-        CategoryBar()
-
-        ProductSubject()
-
-        ProductSubject()
-
-        BigPictureAdvertise()
-
-        ProductSubject()
-
-        ProductSubject()
+        CategoryBar(CATEGORY)
 
     }
 
@@ -98,21 +106,21 @@ fun TopToolbar() {
 // -------------------------------------------------------------------------
 
 @Composable
-fun CategoryBar() {
+fun CategoryBar(categoryList: List<Pair<String, Int>>) {
 
     LazyRow(
         modifier = Modifier.padding(top = 16.dp),
         contentPadding = PaddingValues(end = 16.dp)
     ) {
-        items(10) {
-            CategoryItem()
+        items(categoryList.size) {
+            CategoryItem(categoryList[it])
         }
     }
 
 }
 
 @Composable
-fun CategoryItem() {
+fun CategoryItem(subject: Pair<String, Int>) {
 
     Column(
         modifier = Modifier
@@ -127,13 +135,13 @@ fun CategoryItem() {
         ) {
             Image(
                 modifier = Modifier.padding(16.dp),
-                painter = painterResource(id = R.drawable.ic_icon_app),
+                painter = painterResource(id = subject.second),
                 contentDescription = null
             )
         }
 
         Text(
-            text = "Hotels",
+            text = subject.first,
             modifier = Modifier.padding(top = 4.dp),
             style = TextStyle(color = Color.Gray)
         )
@@ -201,7 +209,7 @@ fun ProductItem() {
                     )
                 )
                 Text(
-                    modifier = Modifier.padding(top =  4.dp),
+                    modifier = Modifier.padding(top = 4.dp),
                     text = "86,000 Tomans",
                     style = TextStyle(fontSize = 14.sp)
                 )
@@ -230,7 +238,7 @@ fun BigPictureAdvertise() {
             .height(260.dp)
             .padding(top = 32.dp, start = 16.dp, end = 16.dp)
             .clip(Shapes.medium)
-            .clickable {  },
+            .clickable { },
         painter = painterResource(id = R.drawable.img_intro),
         contentDescription = null,
         contentScale = ContentScale.Crop,

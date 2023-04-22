@@ -10,6 +10,7 @@ import info.fekri.dunibazaar.model.data.Product
 import info.fekri.dunibazaar.model.repository.product.ProductRepository
 import info.fekri.dunibazaar.model.repository.user.UserRepository
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -30,6 +31,9 @@ class MainViewModel(
 
             if (isInternetConnected) {
                 showProgressBar.value = true
+
+                // This is for test, you can delete it
+                delay(1200L)
 
                 val newDataProducts = async { productRepository.getAllProducts(isInternetConnected) }
                 val newDataAds = async { productRepository.getAllAds(isInternetConnected) }

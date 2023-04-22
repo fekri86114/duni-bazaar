@@ -23,7 +23,7 @@ val myModules = module {
         Room.databaseBuilder(
             androidContext(),
             AppDatabase::class.java, "app_dataBase.db"
-        )
+        ).build()
     }
 
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
